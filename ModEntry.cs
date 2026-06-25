@@ -151,7 +151,7 @@ internal class ModEntry : Mod
         if (!Context.IsWorldReady)
             return;
 
-        if (Game1.activeClickableMenu != null)
+        if (Game1.paused || Game1.activeClickableMenu != null || !Game1.game1.IsActive)
             return;
 
         if (!EnableAutomation)
