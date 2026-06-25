@@ -1,0 +1,41 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
+    <Version>1.0.0</Version>
+    <RootNamespace>AutoFairyDust</RootNamespace>
+    <EnableModDeploy>false</EnableModDeploy>
+    <EnableModZip>false</EnableModZip>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.1.1" />
+  </ItemGroup>
+
+  <Target Name="DeployMod" AfterTargets="Build" Condition="'$(Configuration)'=='Debug'">
+    <PropertyGroup>
+      <StardropSource>F:\games\Stardew Valley\Mods\Stardrop Installed Mods\AutoFairyDust</StardropSource>
+      <StardropModsDir>$([System.Environment]::GetFolderPath(SpecialFolder.ApplicationData))\Stardrop\Data\Selected Mods\AutoFairyDust</StardropModsDir>
+      <OldModDir>F:\games\Stardew Valley\Mods\AutoFairyDust</OldModDir>
+    </PropertyGroup>
+
+    <!-- clean old duplicates -->
+    <RemoveDir Directories="$(OldModDir)" Condition="Exists('$(OldModDir)')" />
+
+    <!-- deploy to Stardrop source folder -->
+    <MakeDir Directories="$(StardropSource)" Condition="!Exists('$(StardropSource)')" />
+    <Copy SourceFiles="$(TargetDir)AutoFairyDust.dll" DestinationFolder="$(StardropSource)" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\manifest.json" DestinationFolder="$(StardropSource)" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\i18n\default.json" DestinationFolder="$(StardropSource)\i18n\" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\i18n\zh.json" DestinationFolder="$(StardropSource)\i18n\" />
+
+    <!-- deploy directly to Stardrop Selected Mods (where SMAPI actually loads from) -->
+    <RemoveDir Directories="$(StardropModsDir)" Condition="Exists('$(StardropModsDir)')" />
+    <MakeDir Directories="$(StardropModsDir)" Condition="!Exists('$(StardropModsDir)')" />
+    <Copy SourceFiles="$(TargetDir)AutoFairyDust.dll" DestinationFolder="$(StardropModsDir)" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\manifest.json" DestinationFolder="$(StardropModsDir)" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\i18n\default.json" DestinationFolder="$(StardropModsDir)\i18n\" />
+    <Copy SourceFiles="$(MSBuildProjectDirectory)\i18n\zh.json" DestinationFolder="$(StardropModsDir)\i18n\" />
+  </Target>
+</Project>

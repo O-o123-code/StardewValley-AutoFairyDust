@@ -1,0 +1,10 @@
+{
+    "Name": "Auto Fairy Dust",
+    "Author": "anomalyco",
+    "Version": "1.0.0",
+    "MinimumApiVersion": "4.1.0",
+    "Description": "Automatically applies fairy dust to connected machines from nearby chests.",
+    "UniqueID": "anomalyco.AutoFairyDust",
+    "EntryDll": "AutoFairyDust.dll",
+    "UpdateKeys": []
+}

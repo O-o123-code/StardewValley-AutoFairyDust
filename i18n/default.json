@@ -1,0 +1,20 @@
+{
+    "config.title.main-options": "Main Options",
+    "config.enabled.name": "Enabled",
+    "config.enabled.desc": "Whether to enable auto fairy dust application.",
+    "config.max-per-second.name": "Max Uses Per Second",
+    "config.max-per-second.desc": "Maximum number of fairy dust applications per second to prevent lag.",
+    "config.machine-cooldown.name": "Machine Cooldown (seconds)",
+    "config.machine-cooldown.desc": "Minimum seconds between fairy dust uses on the same machine.",
+    "config.toggle-overlay-key.name": "Toggle Overlay Key",
+    "config.toggle-overlay-key.desc": "Key to toggle the network connectivity overlay.",
+    "config.show-hud-message.name": "Show HUD Messages",
+    "config.show-hud-message.desc": "Show a HUD message when fairy dust is consumed.",
+
+    "config.connectors.title": "Connectors",
+    "config.connector.desc": "If enabled, this item links machines and chests together.",
+    "config.custom-connectors.name": "Custom Connectors",
+    "config.custom-connectors.desc": "Additional connector items (comma-separated item IDs or names).",
+
+    "hud.fairy-dust-used": "Fairy Dust used"
+}

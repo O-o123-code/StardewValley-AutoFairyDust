@@ -1,0 +1,20 @@
+{
+    "config.title.main-options": "主要选项",
+    "config.enabled.name": "启用模组",
+    "config.enabled.desc": "启用或禁用自动使用仙尘功能。",
+    "config.max-per-second.name": "每秒最大消耗数",
+    "config.max-per-second.desc": "每秒最多使用仙尘的次数，防止游戏卡顿。",
+    "config.machine-cooldown.name": "设备冷却间隔（秒）",
+    "config.machine-cooldown.desc": "同一设备两次使用仙尘的最小间隔秒数。",
+    "config.toggle-overlay-key.name": "覆盖层开关按键",
+    "config.toggle-overlay-key.desc": "切换调试覆盖层显示的按键。",
+    "config.show-hud-message.name": "显示 HUD 提示",
+    "config.show-hud-message.desc": "消耗仙尘时在屏幕左上角显示提示信息。",
+
+    "config.connectors.title": "连接器",
+    "config.connector.desc": "启用后，该物品将连接设备和箱子。",
+    "config.custom-connectors.name": "自定义连接器",
+    "config.custom-connectors.desc": "额外连接器物品（逗号分隔的物品 ID 或名称）。",
+
+    "hud.fairy-dust-used": "已使用仙尘"
+}
