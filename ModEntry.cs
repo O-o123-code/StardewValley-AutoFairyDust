@@ -40,6 +40,8 @@ internal class ModEntry : Mod
         helper.Events.Input.ButtonsChanged += OnButtonsChanged;
         helper.Events.World.ObjectListChanged += OnObjectListChanged;
         helper.Events.World.BuildingListChanged += OnBuildingListChanged;
+        helper.Events.World.TerrainFeatureListChanged += OnTerrainFeatureListChanged;
+        helper.Events.World.LargeTerrainFeatureListChanged += OnLargeTerrainFeatureListChanged;
         helper.Events.Player.Warped += OnWarped;
 
         RemoveDuplicateModFolder();
@@ -98,6 +100,18 @@ internal class ModEntry : Mod
     }
 
     private void OnBuildingListChanged(object sender, BuildingListChangedEventArgs e)
+    {
+        if (Context.IsMainPlayer)
+            Network.MarkDirty(e.Location);
+    }
+
+    private void OnTerrainFeatureListChanged(object sender, TerrainFeatureListChangedEventArgs e)
+    {
+        if (Context.IsMainPlayer)
+            Network.MarkDirty(e.Location);
+    }
+
+    private void OnLargeTerrainFeatureListChanged(object sender, LargeTerrainFeatureListChangedEventArgs e)
     {
         if (Context.IsMainPlayer)
             Network.MarkDirty(e.Location);
@@ -230,7 +244,11 @@ internal class ModEntry : Mod
         gmcm.Register(
             mod: ModManifest,
             reset: () => Config = new ModConfig(),
-            save: () => Helper.WriteConfig(Config)
+            save: () =>
+            {
+                Helper.WriteConfig(Config);
+                ReloadConfig();
+            }
         );
 
         gmcm.AddSectionTitle(
@@ -344,6 +362,23 @@ internal class ModEntry : Mod
     private void RegisterModConfigDelayed()
     {
         ConfigRegisterCountdown = 10;
+    }
+
+    private void ReloadConfig()
+    {
+        MachineCooldowns.Clear();
+        UsesThisSecond.Value = 0;
+
+        if (Config.Enabled)
+        {
+            Monitor.Log("Reloading network after config change...", LogLevel.Info);
+            Network.RebuildAll();
+        }
+        else
+        {
+            Monitor.Log("Mod disabled via config change, clearing network state.", LogLevel.Info);
+            Network.MarkAllDirty();
+        }
     }
 }
 

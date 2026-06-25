@@ -232,6 +232,7 @@ internal class FairyDustNetwork
     private bool IsConnector(GameLocation location, Vector2 tile)
     {
         if (Config.ConnectorNames.Count == 0)
+            return false;
 
         if (location.terrainFeatures.TryGetValue(tile, out var feature) && feature is Flooring floor)
         {
