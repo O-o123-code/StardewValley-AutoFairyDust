@@ -394,17 +394,16 @@ internal class ModEntry : Mod
 
     private void ReloadConfig()
     {
+        MachineCooldowns.Clear();
         UsesThisSecond.Value = 0;
 
         if (Config.Enabled)
         {
-            MachineCooldowns.Clear();
             Monitor.Log("Reloading network after config change...", LogLevel.Info);
             Network.RebuildAll();
         }
         else
         {
-            MachineCooldowns.Clear();
             Monitor.Log("Mod disabled via config change, clearing network state.", LogLevel.Info);
             Network.MarkAllDirty();
         }
