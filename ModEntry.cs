@@ -239,7 +239,11 @@ internal class ModEntry : Mod
             if (!group.TryConsumeOneFairyDust(out int ci, out int slot, out int prevStack))
                 continue;
 
-            if (!FairyDustHelper.TryApply(machine))
+            if (machine.Location != null && machine.Location != Game1.currentLocation)
+            {
+                machine.MinutesUntilReady = 0;
+            }
+            else if (!FairyDustHelper.TryApply(machine))
             {
                 group.RollbackFairyDust(ci, slot, prevStack);
                 continue;
