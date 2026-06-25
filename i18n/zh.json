@@ -16,5 +16,6 @@
     "config.custom-connectors.name": "自定义连接器",
     "config.custom-connectors.desc": "额外连接器物品（逗号分隔的物品 ID 或名称）。",
 
-    "hud.fairy-dust-used": "已使用仙尘"
+    "hud.fairy-dust-used": "已使用仙尘",
+    "warning.automate-conflict": "已安装 Automate，该模组内置了仙尘自动化功能。如果遇到意外的仙尘消耗，请将 Automate 的 config.json 中的 MinMinutesForFairyDust 设为 99999999 来禁用它。"
 }

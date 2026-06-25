@@ -18,5 +18,5 @@
 
     "hud.fairy-dust-used": "Fairy Dust used",
 
-    "warning.automate-conflict": "⚠️ Automate is installed and has built-in fairy dust automation. If you experience unexpected fairy dust consumption, disable Automate's fairy dust by setting MinMinutesForFairyDust to 99999999 in Automate's config.json."
+    "warning.automate-conflict": "Automate is installed and has built-in fairy dust automation. If you experience unexpected fairy dust consumption, disable Automate's fairy dust by setting MinMinutesForFairyDust to 99999999 in Automate's config.json."
 }

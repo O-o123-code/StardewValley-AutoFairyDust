@@ -56,10 +56,10 @@ internal class ModEntry : Mod
             string message = I18n.Warning_AutomateConflict();
             if (string.IsNullOrEmpty(message))
             {
-                message = "⚠️ Automate is installed and has built-in fairy dust automation. If you experience unexpected fairy dust consumption, disable Automate's fairy dust by setting MinMinutesForFairyDust to 99999999 in Automate's config.json.";
+                message = "Automate is installed and has built-in fairy dust automation. If you experience unexpected fairy dust consumption, disable Automate's fairy dust by setting MinMinutesForFairyDust to 99999999 in Automate's config.json.";
             }
 
-            Monitor.Log(message, LogLevel.Warn);
+            Monitor.Log(message, LogLevel.Info);
         }
     }
 
@@ -151,6 +151,9 @@ internal class ModEntry : Mod
         if (!Context.IsWorldReady)
             return;
 
+        if (Game1.activeClickableMenu != null)
+            return;
+
         if (!EnableAutomation)
             return;
 
@@ -230,7 +233,7 @@ internal class ModEntry : Mod
 
                     Monitor.Log(
                         $"Applied fairy dust to {machine.DisplayName} at {machine.Location.Name} ({machine.TileLocation.X}, {machine.TileLocation.Y})",
-                        LogLevel.Info
+                        LogLevel.Trace
                     );
                 }
             }
@@ -307,11 +310,11 @@ internal class ModEntry : Mod
             mod: ModManifest,
             name: I18n.Config_MachineCooldown_Name,
             tooltip: I18n.Config_MachineCooldown_Desc,
-            getValue: () => (int)(Config.MachineCooldownSeconds * 10),
-            setValue: value => Config.MachineCooldownSeconds = value / 10f,
+            getValue: () => (int)Config.MachineCooldownSeconds,
+            setValue: value => Config.MachineCooldownSeconds = value,
             min: 0,
-            max: 100,
-            interval: 5
+            max: 600,
+            interval: 1
         );
 
         gmcm.AddKeybindList(
