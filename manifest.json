@@ -6,5 +6,5 @@
     "Description": "Automatically applies fairy dust to connected machines from nearby chests.",
     "UniqueID": "anomalyco.AutoFairyDust",
     "EntryDll": "AutoFairyDust.dll",
-    "UpdateKeys": []
+    "UpdateKeys": ["Nexus:48152"]
 }
