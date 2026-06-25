@@ -209,33 +209,27 @@ internal class ModEntry : Mod
                 if (!FairyDustHelper.CanAcceptFairyDust(machine))
                     continue;
 
-                while (EnableAutomation && UsesThisSecond.Value < Config.MaxPerSecond)
+                if (!group.TryConsumeOneFairyDust(out int ci, out int slot, out int prevStack))
+                    continue;
+
+                if (!FairyDustHelper.TryApply(machine))
                 {
-                    if (!FairyDustHelper.CanAcceptFairyDust(machine))
-                        break;
-
-                    if (!group.TryConsumeOneFairyDust(out int ci, out int slot, out int prevStack))
-                        break;
-
-                    if (!FairyDustHelper.TryApply(machine))
-                    {
-                        group.RollbackFairyDust(ci, slot, prevStack);
-                        break;
-                    }
-
-                    UsesThisSecond.Value++;
-                    MachineCooldowns[key] = curMs + cooldownMs;
-
-                    if (Config.ShowHudMessage)
-                    {
-                        Game1.addHUDMessage(new HUDMessage(I18n.Hud_FairyDustUsed(), 2));
-                    }
-
-                    Monitor.Log(
-                        $"Applied fairy dust to {machine.DisplayName} at {machine.Location.Name} ({machine.TileLocation.X}, {machine.TileLocation.Y})",
-                        LogLevel.Trace
-                    );
+                    group.RollbackFairyDust(ci, slot, prevStack);
+                    continue;
                 }
+
+                UsesThisSecond.Value++;
+                MachineCooldowns[key] = curMs + cooldownMs;
+
+                if (Config.ShowHudMessage)
+                {
+                    Game1.addHUDMessage(new HUDMessage(I18n.Hud_FairyDustUsed(), 2));
+                }
+
+                Monitor.Log(
+                    $"Applied fairy dust to {machine.DisplayName} at {machine.Location.Name} ({machine.TileLocation.X}, {machine.TileLocation.Y})",
+                    LogLevel.Trace
+                );
             }
         }
     }
