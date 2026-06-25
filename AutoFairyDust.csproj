@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Version>1.0.0</Version>
+    <RootNamespace>AutoFairyDust</RootNamespace>
+    <TargetFramework>net6.0</TargetFramework>
+    <EnableModDeploy>false</EnableModDeploy>
+    <EnableModZip>false</EnableModZip>
+  </PropertyGroup>
+
+  <Target Name="CopyToStardrop" AfterTargets="Build">
+    <Message Text="Copying AutoFairyDust to Stardrop Installed Mods..." Importance="high" />
+    <ItemGroup>
+      <StardropFiles Include="$(TargetDir)\*.dll" />
+      <StardropAssets Include="$(ProjectDir)\manifest.json" />
+      <StardropI18n Include="$(ProjectDir)\i18n\**\*.*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(StardropFiles)" DestinationFolder="$(GamePath)\Mods\Stardrop Installed Mods\AutoFairyDust" />
+    <Copy SourceFiles="@(StardropAssets)" DestinationFolder="$(GamePath)\Mods\Stardrop Installed Mods\AutoFairyDust" />
+    <Copy SourceFiles="@(StardropI18n)" DestinationFolder="$(GamePath)\Mods\Stardrop Installed Mods\AutoFairyDust\i18n" />
+  </Target>
+
+  <ItemGroup>
+    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.4.0" />
+  </ItemGroup>
+</Project>

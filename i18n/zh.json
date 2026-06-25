@@ -1,0 +1,23 @@
+{
+  "config.enabled.name": "模组总开关",
+  "config.enabled.desc": "启用或禁用自动使用仙尘功能。",
+
+  "config.max-per-second.name": "每秒最大消耗数",
+  "config.max-per-second.desc": "每秒最多使用仙尘的次数。防止性能问题。",
+
+  "config.cooldown.name": "设备使用间隔",
+  "config.cooldown.desc": "同一设备两次使用仙尘的最小间隔秒数。",
+
+  "config.connectors.name": "连接器列表",
+  "config.connectors.desc": "逗号分隔的地板/路径物品名称，用于延伸连通网络。",
+
+  "config.toggle-overlay-key.name": "覆盖层快捷键",
+  "config.toggle-overlay-key.desc": "切换调试覆盖层显示的按键。",
+
+  "config.show-overlay.name": "显示覆盖层",
+  "config.show-overlay.desc": "调试覆盖层是否可见。",
+
+  "overlay.key-toggle": "覆盖层已{0}。",
+  "overlay.key-toggle-on": "开启",
+  "overlay.key-toggle-off": "关闭"
+}

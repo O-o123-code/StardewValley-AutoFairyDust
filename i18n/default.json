@@ -1,0 +1,23 @@
+{
+  "config.enabled.name": "Enable Mod",
+  "config.enabled.desc": "Enable or disable automatic Fairy Dust usage.",
+
+  "config.max-per-second.name": "Max Uses Per Second",
+  "config.max-per-second.desc": "Maximum number of Fairy Dust uses per second. Prevents performance issues.",
+
+  "config.cooldown.name": "Machine Cooldown",
+  "config.cooldown.desc": "Minimum seconds between Fairy Dust uses on the same machine.",
+
+  "config.connectors.name": "Connector Items",
+  "config.connectors.desc": "Comma-separated list of floor/path items that extend connectivity.",
+
+  "config.toggle-overlay-key.name": "Toggle Overlay Key",
+  "config.toggle-overlay-key.desc": "Key to toggle the debug overlay on/off.",
+
+  "config.show-overlay.name": "Show Overlay",
+  "config.show-overlay.desc": "Whether the debug overlay is visible.",
+
+  "overlay.key-toggle": "Overlay toggled {0}.",
+  "overlay.key-toggle-on": "ON",
+  "overlay.key-toggle-off": "OFF"
+}
