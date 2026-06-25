@@ -72,33 +72,41 @@ internal class FairyDustNetwork
 
         var allChestTiles = new HashSet<Vector2>();
         var allMachineTiles = new HashSet<Vector2>();
+        var allEntityTiles = new HashSet<Vector2>();
 
         foreach (Vector2 tile in GetAllTiles(location))
         {
             if (IsChest(location, tile, out _))
+            {
                 allChestTiles.Add(tile);
+                allEntityTiles.Add(tile);
+            }
             else if (HasMachine(location, tile, out _))
+            {
                 allMachineTiles.Add(tile);
+                allEntityTiles.Add(tile);
+            }
+            else if (IsConnector(location, tile))
+            {
+                allEntityTiles.Add(tile);
+            }
         }
 
         var validGroups = new List<NetworkGroup>();
         var visited = new HashSet<Vector2>();
         var connectedMachineTiles = new HashSet<Vector2>();
 
-        foreach (Vector2 tile in GetAllTiles(location))
+        foreach (Vector2 tile in allEntityTiles)
         {
             if (visited.Contains(tile))
                 continue;
 
-            if (HasAnyEntity(location, tile))
+            var group = FloodFillGroup(location, tile, visited);
+            if (group != null && group.Machines.Count > 0 && group.Chests.Count > 0)
             {
-                var group = FloodFillGroup(location, tile, visited);
-                if (group != null && group.Machines.Count > 0 && group.Chests.Count > 0)
-                {
-                    validGroups.Add(group);
-                    foreach (var m in group.Machines)
-                        connectedMachineTiles.Add(m.TileLocation);
-                }
+                validGroups.Add(group);
+                foreach (var m in group.Machines)
+                    connectedMachineTiles.Add(m.TileLocation);
             }
         }
 

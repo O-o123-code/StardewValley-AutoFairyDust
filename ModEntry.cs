@@ -165,72 +165,96 @@ internal class ModEntry : Mod
         if (!EnableAutomation)
             return;
 
-        double now = Game1.currentGameTime.TotalGameTime.TotalSeconds;
-
-        if (now - LastSecondTimestamp.Value >= 1.0)
-        {
-            UsesThisSecond.Value = 0;
-            LastSecondTimestamp.Value = now;
-        }
-        if (UsesThisSecond.Value >= Config.MaxPerSecond)
-            return;
-
-        GameLocation location = Game1.currentLocation;
-        var groups = Network.GetGroups(location);
-        if (groups == null || groups.Count == 0)
-            return;
+        TickRateLimit();
 
         double curMs = Game1.currentGameTime.TotalGameTime.TotalMilliseconds;
         float cooldownMs = Config.MachineCooldownSeconds * 1000;
 
-        foreach (var group in groups)
+        foreach (var location in Game1.locations)
         {
             if (!EnableAutomation)
+                break;
+
+            ProcessLocationRecursive(location, curMs, cooldownMs);
+        }
+    }
+
+    private void ProcessLocationRecursive(GameLocation location, double curMs, float cooldownMs)
+    {
+        var groups = Network.GetGroups(location);
+        ProcessGroups(groups, curMs, cooldownMs);
+
+        foreach (var building in location.buildings)
+        {
+            var indoors = building.GetIndoors();
+            if (indoors != null)
+                ProcessLocationRecursive(indoors, curMs, cooldownMs);
+        }
+    }
+
+    private void ProcessGroups(List<NetworkGroup> groups, double curMs, float cooldownMs)
+    {
+        if (groups == null || groups.Count == 0)
+            return;
+
+        foreach (var group in groups)
+        {
+            if (!EnableAutomation || UsesThisSecond.Value >= Config.MaxPerSecond)
                 break;
 
             if (!group.HasFairyDust())
                 continue;
 
-            foreach (var machine in group.Machines)
+            ProcessGroup(group, curMs, cooldownMs);
+        }
+    }
+
+    private void TickRateLimit()
+    {
+        double now = Game1.currentGameTime.TotalGameTime.TotalSeconds;
+        if (now - LastSecondTimestamp.Value >= 1.0)
+        {
+            UsesThisSecond.Value = 0;
+            LastSecondTimestamp.Value = now;
+        }
+    }
+
+    private void ProcessGroup(NetworkGroup group, double curMs, float cooldownMs)
+    {
+        foreach (var machine in group.Machines)
+        {
+            if (!EnableAutomation || UsesThisSecond.Value >= Config.MaxPerSecond)
+                break;
+
+            if (machine.MinutesUntilReady <= 0)
+                continue;
+
+            string key = GetMachineKey(machine);
+            if (MachineCooldowns.TryGetValue(key, out double expiry) && curMs < expiry)
+                continue;
+
+            if (!FairyDustHelper.CanAcceptFairyDust(machine))
+                continue;
+
+            if (!group.TryConsumeOneFairyDust(out int ci, out int slot, out int prevStack))
+                continue;
+
+            if (!FairyDustHelper.TryApply(machine))
             {
-                if (!EnableAutomation)
-                    return;
-
-                if (UsesThisSecond.Value >= Config.MaxPerSecond)
-                    return;
-
-                if (machine.MinutesUntilReady <= 0)
-                    continue;
-
-                string key = GetMachineKey(machine);
-                if (MachineCooldowns.TryGetValue(key, out double expiry) && curMs < expiry)
-                    continue;
-
-                if (!FairyDustHelper.CanAcceptFairyDust(machine))
-                    continue;
-
-                if (!group.TryConsumeOneFairyDust(out int ci, out int slot, out int prevStack))
-                    continue;
-
-                if (!FairyDustHelper.TryApply(machine))
-                {
-                    group.RollbackFairyDust(ci, slot, prevStack);
-                    continue;
-                }
-
-                UsesThisSecond.Value++;
-                MachineCooldowns[key] = curMs + cooldownMs;
-
-                if (Config.ShowHudMessage)
-                {
-                    Game1.addHUDMessage(new HUDMessage(I18n.Hud_FairyDustUsed(), 2));
-                }
-
-                Monitor.Log(
-                    $"Applied fairy dust to {machine.DisplayName} at {machine.Location.Name} ({machine.TileLocation.X}, {machine.TileLocation.Y})",
-                    LogLevel.Trace
-                );
+                group.RollbackFairyDust(ci, slot, prevStack);
+                continue;
             }
+
+            UsesThisSecond.Value++;
+            MachineCooldowns[key] = curMs + cooldownMs;
+
+            if (Config.ShowHudMessage)
+                Game1.addHUDMessage(new HUDMessage(I18n.Hud_FairyDustUsed(), 2));
+
+            Monitor.Log(
+                $"Applied fairy dust to {machine.DisplayName} at {machine.Location.Name} ({machine.TileLocation.X}, {machine.TileLocation.Y})",
+                LogLevel.Trace
+            );
         }
     }
 
@@ -257,7 +281,8 @@ internal class ModEntry : Mod
 
     private static string GetMachineKey(SObject machine)
     {
-        return $"{machine.TileLocation.X},{machine.TileLocation.Y}";
+        string locationName = machine.Location?.NameOrUniqueName ?? "null";
+        return $"{locationName}|{machine.TileLocation.X},{machine.TileLocation.Y}";
     }
 
     private void RegisterModConfig()
@@ -347,6 +372,7 @@ internal class ModEntry : Mod
                         Config.ConnectorNames.Add(itemData.QualifiedItemId);
                     else
                         Config.ConnectorNames.Remove(itemData.QualifiedItemId);
+                    RemoveDuplicateConnectorEntries();
                 }
             );
         }
@@ -363,6 +389,7 @@ internal class ModEntry : Mod
                     Config.ConnectorNames.Remove(id);
                 foreach (string id in items)
                     Config.ConnectorNames.Add(id);
+                RemoveDuplicateConnectorEntries();
             }
         );
     }
@@ -379,6 +406,20 @@ internal class ModEntry : Mod
                 return false;
         }
         return true;
+    }
+
+    private void RemoveDuplicateConnectorEntries()
+    {
+        foreach (var floor in Game1.floorPathData.Values)
+        {
+            var itemData = ItemRegistry.GetData(floor.ItemId);
+            if (itemData == null)
+                continue;
+            bool hasQualified = Config.ConnectorNames.Contains(itemData.QualifiedItemId);
+            bool hasInternal = Config.ConnectorNames.Contains(itemData.InternalName);
+            if (hasQualified && hasInternal)
+                Config.ConnectorNames.Remove(itemData.InternalName);
+        }
     }
 
     private void RegisterModConfigDelayed()

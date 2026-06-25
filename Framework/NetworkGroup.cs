@@ -8,6 +8,8 @@ namespace AutoFairyDust.Framework;
 
 internal class NetworkGroup
 {
+    internal const string FairyDustQualifiedId = "(O)872";
+
     public List<SObject> Machines { get; } = new();
     public List<Chest> Chests { get; } = new();
     public HashSet<Vector2> Tiles { get; } = new();
@@ -18,7 +20,7 @@ internal class NetworkGroup
         {
             foreach (var item in chest.Items)
             {
-                if (item?.QualifiedItemId == "(O)872" && item.Stack > 0)
+                if (item?.QualifiedItemId == FairyDustQualifiedId && item.Stack > 0)
                     return true;
             }
         }
@@ -37,7 +39,7 @@ internal class NetworkGroup
             for (int i = 0; i < chest.Items.Count; i++)
             {
                 var item = chest.Items[i];
-                if (item?.QualifiedItemId == "(O)872" && item.Stack > 0)
+                if (item?.QualifiedItemId == FairyDustQualifiedId && item.Stack > 0)
                 {
                     chestIndex = ci;
                     itemSlot = i;
@@ -64,24 +66,27 @@ internal class NetworkGroup
         if (itemSlot >= 0 && itemSlot < chest.Items.Count && chest.Items[itemSlot] != null)
         {
             var item = chest.Items[itemSlot];
-            if (item.QualifiedItemId == "(O)872")
+            if (item.QualifiedItemId == FairyDustQualifiedId)
             {
-                item.Stack++;
+                item.Stack = previousStack;
                 return;
             }
         }
 
         foreach (var item in chest.Items)
         {
-            if (item?.QualifiedItemId == "(O)872")
+            if (item?.QualifiedItemId == FairyDustQualifiedId)
             {
-                item.Stack++;
+                item.Stack = previousStack;
                 return;
             }
         }
 
-        var newItem = ItemRegistry.Create<SObject>("(O)872");
-        newItem.Stack = 1;
-        chest.Items.Add(newItem);
+        if (chest.Items.Count < chest.GetActualCapacity())
+        {
+            var newItem = ItemRegistry.Create<SObject>(FairyDustQualifiedId);
+            newItem.Stack = previousStack;
+            chest.Items.Add(newItem);
+        }
     }
 }
