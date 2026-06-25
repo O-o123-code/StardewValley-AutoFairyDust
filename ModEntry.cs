@@ -22,7 +22,7 @@ internal class ModEntry : Mod
 
     private readonly PerScreen<int> UsesThisSecond = new();
     private readonly PerScreen<double> LastSecondTimestamp = new();
-    private readonly Dictionary<string, double> MachineCooldowns = new();
+    private readonly Dictionary<(string, int, int), double> MachineCooldowns = new();
     private int ConfigRegisterCountdown = 10;
 
     private bool EnableAutomation => Config.Enabled && Context.IsMainPlayer;
@@ -154,7 +154,7 @@ internal class ModEntry : Mod
         if (Game1.paused || Game1.activeClickableMenu != null || !Game1.game1.IsActive)
             return;
 
-        if (!EnableAutomation)
+        if (!EnableAutomation || e.Ticks % 10 != 0)
             return;
 
         ProcessAutomation();
@@ -172,9 +172,6 @@ internal class ModEntry : Mod
 
         foreach (var location in Game1.locations)
         {
-            if (!EnableAutomation)
-                break;
-
             ProcessLocationRecursive(location, curMs, cooldownMs);
         }
     }
@@ -199,7 +196,7 @@ internal class ModEntry : Mod
 
         foreach (var group in groups)
         {
-            if (!EnableAutomation || UsesThisSecond.Value >= Config.MaxPerSecond)
+            if (UsesThisSecond.Value >= Config.MaxPerSecond)
                 break;
 
             if (!group.HasFairyDust())
@@ -229,7 +226,7 @@ internal class ModEntry : Mod
             if (machine.MinutesUntilReady <= 0)
                 continue;
 
-            string key = GetMachineKey(machine);
+            var key = GetMachineKey(machine);
             if (MachineCooldowns.TryGetValue(key, out double expiry) && curMs < expiry)
                 continue;
 
@@ -283,10 +280,10 @@ internal class ModEntry : Mod
         }
     }
 
-    private static string GetMachineKey(SObject machine)
+    private static (string, int, int) GetMachineKey(SObject machine)
     {
         string locationName = machine.Location?.NameOrUniqueName ?? "null";
-        return $"{locationName}|{machine.TileLocation.X},{machine.TileLocation.Y}";
+        return (locationName, (int)machine.TileLocation.X, (int)machine.TileLocation.Y);
     }
 
     private void RegisterModConfig()

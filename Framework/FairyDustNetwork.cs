@@ -74,6 +74,9 @@ internal class FairyDustNetwork
         var allMachineTiles = new HashSet<Vector2>();
         var allEntityTiles = new HashSet<Vector2>();
 
+        if (location.objects.Count() == 0 && location.terrainFeatures.Count() == 0)
+            return;
+
         foreach (Vector2 tile in GetAllTiles(location))
         {
             if (IsChest(location, tile, out _))

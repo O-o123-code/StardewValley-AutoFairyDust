@@ -48,7 +48,6 @@ internal class NetworkGroup
                     item.Stack--;
                     if (item.Stack <= 0)
                         chest.Items[i] = null;
-                    chest.clearNulls();
                     return true;
                 }
             }
