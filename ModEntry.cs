@@ -305,10 +305,7 @@ internal class ModEntry : Mod
             name: I18n.Config_MachineCooldown_Name,
             tooltip: I18n.Config_MachineCooldown_Desc,
             getValue: () => (int)Config.MachineCooldownSeconds,
-            setValue: value => Config.MachineCooldownSeconds = value,
-            min: 0,
-            max: 600,
-            interval: 1
+            setValue: value => Config.MachineCooldownSeconds = Math.Max(1, value)
         );
 
         gmcm.AddKeybindList(
