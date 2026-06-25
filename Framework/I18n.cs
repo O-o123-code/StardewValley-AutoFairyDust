@@ -31,4 +31,5 @@ internal static class I18n
     public static string Config_CustomConnectors_Name() => Get("config.custom-connectors.name");
     public static string Config_CustomConnectors_Desc() => Get("config.custom-connectors.desc");
     public static string Hud_FairyDustUsed() => Get("hud.fairy-dust-used");
+    public static string Warning_AutomateConflict() => Get("warning.automate-conflict");
 }

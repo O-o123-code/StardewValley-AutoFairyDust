@@ -45,6 +45,22 @@ internal class ModEntry : Mod
         helper.Events.Player.Warped += OnWarped;
 
         RemoveDuplicateModFolder();
+        CheckAutomateConflict();
+    }
+
+    private void CheckAutomateConflict()
+    {
+        var automate = Helper.ModRegistry.Get("Pathoschild.Automate");
+        if (automate != null)
+        {
+            string message = I18n.Warning_AutomateConflict();
+            if (string.IsNullOrEmpty(message))
+            {
+                message = "⚠️ Automate is installed and has built-in fairy dust automation. If you experience unexpected fairy dust consumption, disable Automate's fairy dust by setting MinMinutesForFairyDust to 99999999 in Automate's config.json.";
+            }
+
+            Monitor.Log(message, LogLevel.Warn);
+        }
     }
 
     private void RemoveDuplicateModFolder()
@@ -143,6 +159,9 @@ internal class ModEntry : Mod
 
     private void ProcessAutomation()
     {
+        if (!EnableAutomation)
+            return;
+
         double now = Game1.currentGameTime.TotalGameTime.TotalSeconds;
 
         if (now - LastSecondTimestamp.Value >= 1.0)
@@ -163,11 +182,17 @@ internal class ModEntry : Mod
 
         foreach (var group in groups)
         {
+            if (!EnableAutomation)
+                break;
+
             if (!group.HasFairyDust())
                 continue;
 
             foreach (var machine in group.Machines)
             {
+                if (!EnableAutomation)
+                    return;
+
                 if (UsesThisSecond.Value >= Config.MaxPerSecond)
                     return;
 
@@ -181,7 +206,7 @@ internal class ModEntry : Mod
                 if (!FairyDustHelper.CanAcceptFairyDust(machine))
                     continue;
 
-                while (UsesThisSecond.Value < Config.MaxPerSecond)
+                while (EnableAutomation && UsesThisSecond.Value < Config.MaxPerSecond)
                 {
                     if (!FairyDustHelper.CanAcceptFairyDust(machine))
                         break;
@@ -202,7 +227,7 @@ internal class ModEntry : Mod
 
                     Monitor.Log(
                         $"Applied fairy dust to {machine.DisplayName} at {location.Name} ({machine.TileLocation.X}, {machine.TileLocation.Y})",
-                        LogLevel.Trace
+                        LogLevel.Info
                     );
                 }
             }
@@ -366,16 +391,17 @@ internal class ModEntry : Mod
 
     private void ReloadConfig()
     {
-        MachineCooldowns.Clear();
         UsesThisSecond.Value = 0;
 
         if (Config.Enabled)
         {
+            MachineCooldowns.Clear();
             Monitor.Log("Reloading network after config change...", LogLevel.Info);
             Network.RebuildAll();
         }
         else
         {
+            MachineCooldowns.Clear();
             Monitor.Log("Mod disabled via config change, clearing network state.", LogLevel.Info);
             Network.MarkAllDirty();
         }

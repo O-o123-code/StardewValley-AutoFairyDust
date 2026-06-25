@@ -1,7 +1,7 @@
 {
     "config.title.main-options": "主要选项",
     "config.enabled.name": "启用模组",
-    "config.enabled.desc": "启用或禁用自动使用仙尘功能。",
+    "config.enabled.desc": "启用或禁用自动使用仙尘功能。注意：如果关闭本模组后设备依然消耗仙尘，这是 Automate 模组的内置仙尘功能在运行。请将 Automate 的 config.json 中的 MinMinutesForFairyDust 设为 99999999 来关闭它。",
     "config.max-per-second.name": "每秒最大消耗数",
     "config.max-per-second.desc": "每秒最多使用仙尘的次数，防止游戏卡顿。",
     "config.machine-cooldown.name": "设备冷却间隔（秒）",

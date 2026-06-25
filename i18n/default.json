@@ -1,7 +1,7 @@
 {
     "config.title.main-options": "Main Options",
     "config.enabled.name": "Enabled",
-    "config.enabled.desc": "Whether to enable auto fairy dust application.",
+    "config.enabled.desc": "Enable or disable auto fairy dust. Note: If Automate is installed and you still see fairy dust being consumed after disabling this mod, it's Automate's built-in fairy dust feature. Set MinMinutesForFairyDust to 99999999 in Automate's config.json to disable it.",
     "config.max-per-second.name": "Max Uses Per Second",
     "config.max-per-second.desc": "Maximum number of fairy dust applications per second to prevent lag.",
     "config.machine-cooldown.name": "Machine Cooldown (seconds)",
@@ -16,5 +16,7 @@
     "config.custom-connectors.name": "Custom Connectors",
     "config.custom-connectors.desc": "Additional connector items (comma-separated item IDs or names).",
 
-    "hud.fairy-dust-used": "Fairy Dust used"
+    "hud.fairy-dust-used": "Fairy Dust used",
+
+    "warning.automate-conflict": "⚠️ Automate is installed and has built-in fairy dust automation. If you experience unexpected fairy dust consumption, disable Automate's fairy dust by setting MinMinutesForFairyDust to 99999999 in Automate's config.json."
 }
