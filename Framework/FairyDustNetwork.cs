@@ -121,7 +121,21 @@ internal class FairyDustNetwork
 
         foreach (var location in Game1.locations)
         {
-            RebuildLocation(location);
+            RebuildLocationRecursive(location);
+        }
+    }
+
+    private void RebuildLocationRecursive(GameLocation location)
+    {
+        RebuildLocation(location);
+
+        foreach (var building in location.buildings)
+        {
+            var indoors = building.GetIndoors();
+            if (indoors != null)
+            {
+                RebuildLocationRecursive(indoors);
+            }
         }
     }
 

@@ -25,15 +25,24 @@ internal class NetworkGroup
         return false;
     }
 
-    public bool TryConsumeOneFairyDust()
+    public bool TryConsumeOneFairyDust(out int chestIndex, out int itemSlot, out int previousStack)
     {
-        foreach (var chest in Chests)
+        chestIndex = -1;
+        itemSlot = -1;
+        previousStack = 0;
+
+        for (int ci = 0; ci < Chests.Count; ci++)
         {
+            var chest = Chests[ci];
             for (int i = 0; i < chest.Items.Count; i++)
             {
                 var item = chest.Items[i];
                 if (item?.QualifiedItemId == "(O)872" && item.Stack > 0)
                 {
+                    chestIndex = ci;
+                    itemSlot = i;
+                    previousStack = item.Stack;
+
                     item.Stack--;
                     if (item.Stack <= 0)
                         chest.Items[i] = null;
@@ -43,5 +52,36 @@ internal class NetworkGroup
             }
         }
         return false;
+    }
+
+    public void RollbackFairyDust(int chestIndex, int itemSlot, int previousStack)
+    {
+        if (chestIndex < 0 || chestIndex >= Chests.Count)
+            return;
+
+        var chest = Chests[chestIndex];
+
+        if (itemSlot >= 0 && itemSlot < chest.Items.Count && chest.Items[itemSlot] != null)
+        {
+            var item = chest.Items[itemSlot];
+            if (item.QualifiedItemId == "(O)872")
+            {
+                item.Stack++;
+                return;
+            }
+        }
+
+        foreach (var item in chest.Items)
+        {
+            if (item?.QualifiedItemId == "(O)872")
+            {
+                item.Stack++;
+                return;
+            }
+        }
+
+        var newItem = ItemRegistry.Create<SObject>("(O)872");
+        newItem.Stack = 1;
+        chest.Items.Add(newItem);
     }
 }

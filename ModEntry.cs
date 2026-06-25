@@ -211,11 +211,14 @@ internal class ModEntry : Mod
                     if (!FairyDustHelper.CanAcceptFairyDust(machine))
                         break;
 
-                    if (!FairyDustHelper.TryApply(machine))
+                    if (!group.TryConsumeOneFairyDust(out int ci, out int slot, out int prevStack))
                         break;
 
-                    if (!group.TryConsumeOneFairyDust())
+                    if (!FairyDustHelper.TryApply(machine))
+                    {
+                        group.RollbackFairyDust(ci, slot, prevStack);
                         break;
+                    }
 
                     UsesThisSecond.Value++;
                     MachineCooldowns[key] = curMs + cooldownMs;
@@ -226,7 +229,7 @@ internal class ModEntry : Mod
                     }
 
                     Monitor.Log(
-                        $"Applied fairy dust to {machine.DisplayName} at {location.Name} ({machine.TileLocation.X}, {machine.TileLocation.Y})",
+                        $"Applied fairy dust to {machine.DisplayName} at {machine.Location.Name} ({machine.TileLocation.X}, {machine.TileLocation.Y})",
                         LogLevel.Info
                     );
                 }
